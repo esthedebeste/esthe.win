@@ -1,0 +1,48 @@
+!doctype(html)
+html(lang=en) {
+    head {
+        meta(charset="UTF-8")
+        meta(name="viewport" content="width=device-width, initial-scale=1.0")
+        link(rel="shortcut icon" href="./favicon.jpg" type="image/jpeg")
+        title "esthe win!!"
+        style {
+			body {
+				background-color: #000;
+				color: #f0f;
+				font-family: cursive;
+				text-align: center;
+				font-size: 1.5em;
+			}
+
+			a {
+				color: #f0f !important;
+			}
+
+			small,
+			footer {
+				font-size: 0.66em;
+				display: block;
+			}
+        }
+    }
+    body {
+        h1 "esthe win!!" with script {
+            setInterval(() => {
+                h1.style.color = `hsl(${Date.now() / 1000 * 50 % 360}, 100%, 50%)`
+            }, 10)
+        }
+        img(src="./WAVE.gif" alt="hyper wave gif" width="216" height="128")
+        p "placeholder site while i make a cool one <3"
+        p "old site available at " {
+            a(href="https://site2223.esthe.win") "site2223.esthe.win"
+            small " (or, until " {
+                time(datetime="2023-12-23") "23 Dec. 2023"
+            } ", " {
+                a(href="https://esthe.live") "esthe.live"
+            } ")"
+        }
+        footer "[source @ " {
+            a(href="https://github.com/esthedebeste/esthe.win") "github:esthedebeste/esthe.win"
+        } "]"
+    }   
+}

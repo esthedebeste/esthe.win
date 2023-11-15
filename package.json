@@ -1,0 +1,19 @@
+{
+	"name": "esthe.win",
+	"private": true,
+	"version": "1.0.0",
+	"description": "https://esthe.win/",
+	"scripts": {
+		"build": "node ./build.js",
+		"dev": "node ./build.js --dev"
+	},
+	"keywords": [],
+	"author": "esthedebeste",
+	"license": "MIT",
+	"devDependencies": {
+		"@types/node": "^20.9.0",
+		"poggies": "^2.2.0",
+		"sirv-cli": "^2.0.2"
+	},
+	"type": "module"
+}
