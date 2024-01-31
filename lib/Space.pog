@@ -1,0 +1,117 @@
+canvas(aria-hidden="true" data-fragment-shader=(fragmentShader) data-vertex-shader=(vertexShader)) with script {
+	function hueToRgb(h) {
+		function tToRgb(t) {
+			if (t < 0) t += 1
+			if (t > 1) t -= 1
+			if (t < 1 / 6) return 6 * t
+			if (t < 1 / 2) return 1
+			if (t < 2 / 3) return 4 - 6 * t
+			return 0
+		}
+
+		let r, g, b
+		r = tToRgb(h + 1 / 3)
+		g = tToRgb(h)
+		b = tToRgb(h - 1 / 3)
+		return [r, g, b]
+	}
+
+	let width = 1080
+	let height = 1920
+	function resizeHandler() {
+		width = canvas.width = window.innerWidth
+		height = canvas.height = window.innerHeight
+	}
+	window.addEventListener("resize", resizeHandler)
+	resizeHandler()
+	const frag = dataset.fragmentShader
+	const vert = dataset.vertexShader
+	const scale = 5
+
+	const goalFps = 24
+	const goalFrameTime = 1000 / goalFps
+
+	function createGlShader(gl, type, glsl) {
+		let shader = gl.createShader(type)
+		if (!shader) throw new Error("no shader")
+		gl.shaderSource(shader, glsl)
+		gl.compileShader(shader)
+		if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+			console.log(gl.getShaderInfoLog(shader))
+			gl.deleteShader(shader)
+			throw new Error("shader compile error")
+		}
+		return shader
+	}
+	const gl = canvas.getContext("webgl")
+	if (!gl) throw new Error("no webgl")
+
+	const vertShader = createGlShader(gl, gl.VERTEX_SHADER, vert)
+	const fragShader = createGlShader(gl, gl.FRAGMENT_SHADER, frag)
+	const program = gl.createProgram()
+	if (!program) throw new Error("no program")
+	gl.attachShader(program, vertShader)
+	gl.attachShader(program, fragShader)
+	gl.linkProgram(program)
+	if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+		console.error(gl.getProgramInfoLog(program))
+		gl.deleteProgram(program)
+		throw new Error("program link error")
+	}
+
+	const locations = {
+		a_position: gl.getAttribLocation(program, "a_position"),
+		iTime: gl.getUniformLocation(program, "iTime"),
+		iScale: gl.getUniformLocation(program, "iScale"),
+		iResolution: gl.getUniformLocation(program, "iResolution"),
+		iColorMultiplier: gl.getUniformLocation(program, "iColorMultiplier"),
+		iColorOffset: gl.getUniformLocation(program, "iColorOffset"),
+	}
+
+	const positionBuffer = gl.createBuffer()
+	gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer)
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-4, -4, +4, -4, 0, +4]), gl.STATIC_DRAW)
+
+	const START_TIME = Date.now()
+	let pTime = 0
+	let animId = requestAnimationFrame(draw)
+	function draw(time) {
+		animId = requestAnimationFrame(draw)
+		if (time - pTime < goalFrameTime) return
+		pTime = time
+		if (!gl) throw new Error("no webgl")
+		const w = width
+		const h = height
+		gl.viewport(0, 0, w, h)
+		gl.useProgram(program)
+		gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer)
+		gl.vertexAttribPointer(locations.a_position, 2, gl.FLOAT, false, 0, 0)
+		gl.enableVertexAttribArray(locations.a_position)
+
+		const timeOffset = (time + START_TIME) / 1000 * 25 % 360
+		const col = hueToRgb(timeOffset / 360)
+		const [ro, go, bo] = col.map(x => x * 0.02)
+		const [rm, gm, bm] = col.map(x => x * 0.2)
+		gl.uniform1f(locations.iTime, time * 1e-3 * 0.1)
+		gl.uniform1f(locations.iScale, scale)
+		gl.uniform2f(locations.iResolution, w, h)
+		gl.uniform3f(locations.iColorOffset, ro, go, bo)
+		gl.uniform3f(locations.iColorMultiplier, rm, gm, bm)
+
+		gl.drawArrays(gl.TRIANGLES, 0, 3)
+	}
+
+	function onElementRemoved(element, callback) {
+		new MutationObserver(function(mutations) {
+			if(!document.body.contains(element)) {
+				callback();
+				this.disconnect();
+			}
+		}).observe(element.parentElement, {childList: true})
+	}
+
+	onElementRemoved(canvas, () => {
+		document.removeEventListener("resize", resizeHandler)
+		cancelAnimationFrame(animId)
+	})
+}

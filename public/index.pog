@@ -1,3 +1,5 @@
+$$space from "../lib/Space.pog"
+
 !doctype(html)
 html(lang=en) {
     head {
@@ -10,39 +12,137 @@ html(lang=en) {
 				background-color: #000;
 				color: #f0f;
 				font-family: cursive;
-				text-align: center;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
 				font-size: 1.5em;
+                text-shadow: 0 0 2em currentColor, 0 0 2em currentColor;
 			}
+
+            canvas {
+                position: fixed;
+                left: 0;
+                top: 0;
+                width: 100vw;
+                height: 100vh;
+                z-index: -1;
+            }
 
 			a {
 				color: #f0f !important;
 			}
+
+            main {
+                width: fit-content;
+            }
 
 			small,
 			footer {
 				font-size: 0.66em;
 				display: block;
 			}
+
+            footer {
+                margin-top: 1em;
+            }
+
+            .icon {
+                height: 1em;
+                width: 1em;
+                vertical-align: middle;
+            }
+
+            .nom {
+                margin: 0;
+                padding: 0;
+            }
+
+            .totp {
+                margin: 0;
+                padding: 0;
+                position: relative;
+                width: fit-content;
+            }
+            
+            .totp progress {
+                position: absolute;
+                transform: translateY(50%);
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                height: 5px;
+                border: none;
+                filter: contrast(5) hue-rotate(45deg);
+                outline: solid 1px #00f;
+            }
         }
     }
     body {
-        h1 "esthe win!!" with script {
-            setInterval(() => {
-                h1.style.color = `hsl(${Date.now() / 1000 * 50 % 360}, 100%, 50%)`
-            }, 10)
-        }
-        img(src="./WAVE.gif" alt="hyper wave gif" width="216" height="128")
-        p "placeholder site while i make a cool one <3"
-        p "old site available at " {
-            a(href="https://site2223.esthe.win") "site2223.esthe.win"
-            small " (or, until " {
-                time(datetime="2023-12-23") "23 Dec. 2023"
-            } ", " {
-                a(href="https://esthe.live") "esthe.live"
-            } ")"
+        $space
+
+        main {
+            $$icon(id url) {
+                if(url) {
+                    a(href=`https://${url}` target="_blank") {
+                        img.icon(src=`/icons/${id}.svg` (id))
+                    }
+                } else {
+                    img.icon(src=`/icons/${id}.svg` (id))
+                }
+            }
+
+            img(src="./WAVE.gif" alt="hyper wave gif" width="216" height="128" align="right")
+            h1 "esthe win!!" with script {
+                setInterval(() => {
+                    h1.style.color = `hsl(${(Date.now() / 1000 * 25 + 180) % 360}, 100%, 50%)`
+                }, 1000 / 30)
+            }
+
+            p
+                "welcome to esther winsser's little corner! " { $icon#bisexual $icon#transgender br }
+                "i'm a dutch programmer who loves generic programming." { br }
+                "some languages i know are " {
+                    $icon#svelte(url="svelte.dev")
+                    $icon#css(url="https://developer.mozilla.org/docs/Web/CSS")
+                    $icon#javascript(url="developer.mozilla.org/docs/Web/JavaScript")
+                    $icon#typescript(url="typescriptlang.org")
+                    $icon#civet(url="civet.dev")
+                    $icon#go(url="go.dev")
+                    $icon#rust(url="rust-lang.org")
+                    $icon(id="C++" url="cppreference.com")
+                    $icon#fy(url="github.com/esthedebeste/fylang")
+                    $icon#java(url="java.com")
+                    $icon#kotlin(url="kotlinlang.org")
+                    $icon#c-sharp(url="docs.microsoft.com/dotnet/csharp")
+                    $icon#python(url="python.org")
+                    $icon#dutch(url="wikipedia.org/wiki/Nederlands")
+                }
+
+            h2.nom { a(href="https://npmjs.com/package/@esthe/totp") "totp" }
+            p.totp "code: " { 
+                span(data-secret=(TOTP_SECRET)) `${await generateTOTP(TOTP_SECRET)}` with script {
+                    import("/totp.js").then(({ generateTOTP }) => {
+                        async function generate() {
+                            span.textContent = await generateTOTP(dataset.secret)
+                            setTimeout(generate, 30_000 - (Date.now() % 30_000))
+                        }
+                        generate()
+                    })
+                } br
+                label#totp-label(for="totp-progress") "time: 0 seconds"
+                progress(max="30000" value="0") with script {
+                    const label = document.getElementById("totp-label")
+                    setInterval(() => {
+                        const totpProgress = Date.now() % 30_000
+                        progress.value = totpProgress
+                        label.textContent = `time: ${30 - Math.floor(totpProgress / 1000)} seconds`
+                    }, 1000 / 30)
+                }
+            }
         }
         footer "[source @ " {
             a(href="https://github.com/esthedebeste/esthe.win") "github:esthedebeste/esthe.win"
-        } "]"
-    }   
+        } " | old site @ " { a(href="https://site2223.esthe.win") "site2223.esthe.win" } "]"
+    }
 }

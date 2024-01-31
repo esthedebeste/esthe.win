@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://esthe.win/sitemap.txt
