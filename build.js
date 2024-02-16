@@ -15,9 +15,16 @@ import { pathToFileURL } from "node:url"
 import { renderFile } from "poggies"
 import serve from "sirv-cli"
 
-const TOTP_SECRET = "very-secret-totp-passcode"
+const TOTP_SECRET_URL =
+	"otpauth://totp/estherware:esthe.win?secret=TX6KAUGKT732UFJPVZHGUJ4KIX7QSHCD&issuer=estherware&algorithm=SHA1&digits=6&period=30"
+const TOTP_SECRET = "TX6KAUGKT732UFJPVZHGUJ4KIX7QSHCD"
 const minifyShader = shader =>
-	shader.replace(/\s*\/\/.*\n/g, "").replace(/[{};]\s+/g, match => match[0])
+	shader
+		.replace(/\s*\/\/.*\n/g, "")
+		.replace(/[{};]\s+/g, match => match[0])
+		.replace(/\s+/g, " ")
+		.replace(/\s*([=+-/*,]=?)\s*/g, (match, group1) => group1)
+		.replace(/\s*\)\s*{\s*/g, "){")
 const fragmentShader = minifyShader(await readFile("lib/Space.frag", "utf-8"))
 const vertexShader = minifyShader(await readFile("lib/Space.vert", "utf-8"))
 const LANGUAGES = ["en", "nl"]
@@ -27,6 +34,7 @@ const POGGIES_DATA = {
 	generateTOTP,
 	LANGUAGES,
 	TOTP_SECRET,
+	TOTP_SECRET_URL,
 }
 
 async function renderPoggies(file, from, language) {

@@ -24,7 +24,7 @@ html(lang=(language)) {
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
-				font-size: 1.5em;
+				font-size: 1.4em;
                 text-shadow: 0 0 2em currentColor, 0 0 2em currentColor;
 			}
 
@@ -51,18 +51,32 @@ html(lang=(language)) {
 				display: block;
 			}
 
-            footer {
-                margin-top: 1em;
+            .icons {
+                display: inline;
+                list-style: none;
+                padding: 0;
+                margin: 0;
             }
 
             .icon {
                 height: 1em;
+                width: 1em;
                 vertical-align: middle;
             }
 
-            .nom {
+            #stuff > * {
+                margin-bottom: 1em;
+            }
+
+            #contact img {
+                height: 1.5em;
+                margin: 0 0.25ch;
+            }
+
+            #stuff h2 {
                 margin: 0;
                 padding: 0;
+                width: fit-content;
             }
 
             .totp {
@@ -104,75 +118,117 @@ html(lang=(language)) {
             ::selection {
                 background-color: #b00b1355;
             }
+
+            img.icon[alt="bisexual"], img.icon[alt="transgender"], img.icon[alt="english"], img.icon[alt="nederlands"] {
+                width: calc(5em / 3);
+            }
         }
     }
     body {
-        $space
-
         main {
-            img.right(src="/WAVE.gif" alt="hyper wave gif" width="216" height="128")
+            picture.right {
+                source(srcset="/WAVE.webp" type="image/webp")
+                img(src="/WAVE.gif" alt=(l10n({ en: "gif of a enthusiastically waving smiley", nl: "gif van een smiley die enthousiast zwaait" })) width="216" height="122")
+            }
+
             h1 "esthe win!!" with script {
                 setInterval(() => {
                     h1.style.color = `hsl(${(Date.now() / 1000 * 25 + 180) % 360}, 100%, 50%)`
                 }, 1000 / 30)
             }
+
+            $$icons {
+                span.icons(role="list") {
+                    slot!
+                }
+            }
             $$icon(id url) {
                 if(url) {
-                    a(href=`https://${url}` target="_blank") {
-                        img.icon(src=`/icons/${id}.svg` title=(id) alt=(id))
+                    a(href=`https://${url}` target="_blank" role="listitem" title=(id)) {
+                        img.icon(src=`/icons/${id}.svg` alt=(id))
                     }
                 } else {
-                    img.icon(src=`/icons/${id}.svg` title=(id) alt=(id))
+                    img.icon(src=`/icons/${id}.svg` title=(id) alt=(id) role="listitem")
                 }
             }
 
             p {
                 $l10n(en="welcome to esther winsser's little corner! " nl="welkom in esther winsser's hoekje op 't internet! ")
-                $icon#bisexual $icon#transgender br
-                $l10n(en="i'm a dutch programmer." nl="ik ben een nederlandse programmeur.")
+                $icons { $icon#bisexual $icon#transgender } br
+                $l10n(en="i'm a dutch programmer :p" nl="ik ben een nederlandse programmeur :p")
                 br
                 $l10n(en="some languages i know: " nl="wat talen die ik ken: ")
-                $icon#svelte(url="svelte.dev")
-                $icon#css(url="developer.mozilla.org/docs/Web/CSS")
-                $icon#javascript(url="developer.mozilla.org/docs/Web/JavaScript")
-                $icon#typescript(url="typescriptlang.org")
-                $icon#civet(url="civet.dev")
-                $icon#go(url="go.dev")
-                $icon#rust(url="rust-lang.org")
-                $icon(id="C++" url="cppreference.com")
-                $icon#fy(url="github.com/esthedebeste/fylang")
-                $icon#java(url="java.com")
-                $icon#kotlin(url="kotlinlang.org")
-                $icon#c-sharp(url="docs.microsoft.com/dotnet/csharp")
-                $icon#python(url="python.org")
-                $icon#nederlands(url="nl.wikipedia.org/wiki/Nederlands")
-                $icon#english(url="en.wikipedia.org/wiki/English_language")
+                $icons {
+                    $icon#svelte(url="svelte.dev")
+                    $icon#css(url="developer.mozilla.org/docs/Web/CSS")
+                    $icon#javascript(url="developer.mozilla.org/docs/Web/JavaScript")
+                    $icon#typescript(url="typescriptlang.org")
+                    $icon#civet(url="civet.dev")
+                    $icon#go(url="go.dev")
+                    $icon#rust(url="rust-lang.org")
+                    $icon(id="C++" url="cppreference.com")
+                    $icon#fy(url="github.com/esthedebeste/fylang")
+                    $icon#java(url="java.com")
+                    $icon#kotlin(url="kotlinlang.org")
+                    $icon#c-sharp(url="docs.microsoft.com/dotnet/csharp")
+                    $icon#python(url="python.org")
+                }
+                a(href="/nl") {
+                    img.icon(src=`/icons/nederlands.svg` title="nederlands" alt="nederlands")
+                }
+                a(href="/en") {
+                    img.icon(src=`/icons/english.svg` title="english" alt="english")
+                }
             }
 
-            h2.nom { a(href="https://npmjs.com/package/@esthe/totp" target="_blank") "totp" }
-            p.totp "code: " { 
-                span(data-secret=(TOTP_SECRET)) `${await generateTOTP(TOTP_SECRET)}` with script {
-                    import("/totp.js").then(({ generateTOTP }) => {
-                        async function generate() {
-                            span.textContent = await generateTOTP(dataset.secret)
-                            setTimeout(generate, 30_000 - (Date.now() % 30_000))
+            div#stuff {
+                div#totp {
+                    h2 { a(href="https://npmjs.com/package/@esthe/totp" target="_blank") "totp" }
+                    p.totp { 
+                        small { a(href=(TOTP_SECRET_URL) target="_blank") { $l10n(en="add to this phone" nl="voeg toe aan deze mobiel") } } " / " { a(href=`https://chart.googleapis.com/chart?cht=qr&chl=${encodeURIComponent(TOTP_SECRET_URL)}&chs=512x512&chld=H|1` target="_blank") "qr code" br }
+                    } "code: " { 
+                        span(data-secret=(TOTP_SECRET)) `${await generateTOTP(TOTP_SECRET)}` with script {
+                            import("/totp.js").then(({ generateTOTP }) => {
+                                async function generate() {
+                                    span.textContent = await generateTOTP(dataset.secret)
+                                    setTimeout(generate, 30_000 - (Date.now() % 30_000))
+                                }
+                                generate()
+                            })
+                        } br
+                        label#totp-label(for="totp-progress") { $l10n(en="time: " nl="tijd: ") span "0" $l10n(en=" seconds" nl=" seconden") }
+                        progress#totp-progress(max="30000" value="0") with script {
+                            const label = document.querySelector("#totp-label span")
+                            setInterval(() => {
+                                const totpProgress = Date.now() % 30_000
+                                progress.value = totpProgress
+                                label.textContent = 30 - Math.floor(totpProgress / 1000)
+                            }, 1000 / 30)
                         }
-                        generate()
-                    })
-                } br
-                label#totp-label(for="totp-progress") { $l10n(en="time: " nl="tijd: ") span "0" $l10n(en=" seconds" nl=" seconden") }
-                progress#totp-progress(max="30000" value="0") with script {
-                    const label = document.querySelector("#totp-label span")
-                    setInterval(() => {
-                        const totpProgress = Date.now() % 30_000
-                        progress.value = totpProgress
-                        label.textContent = 30 - Math.floor(totpProgress / 1000)
-                    }, 1000 / 30)
+                    }
+                }
+                $$antibot {
+                    span(style=`font-size: ${Math.random() / 1000}px`) {
+                        $l10n(en="!!Unfortunately, you cannot copy my e-mail. This is so I don't get bot emails.!!" nl="!!Helaas kan je mijn e-mail niet kopiëren. Dit is zodat ik geen spam emails krijg van bots.!!")
+                    }
+                }
+                div#contact {
+                    h2 "contact"
+                } `e​s​t​h​e​r​.​w` { $antibot } `​i​n​s​s​e​r​ (${l10n({en:"at", nl: "apenstaartje"})}) g​m​a​i​l (${l10n({en:"dot", nl: "puntje"})}) ​c​o​m !!!` {
+                    br
+                    $icons {
+                        $icon#mastodon(url="elk.zone/chaos.social/@esthe")
+                        $icon#twitch(url="twitch.tv/esthedebeste")
+                        $icon#twitter(url="twitter.com/esthedebeste")
+                        $icon#discord(url="discord.com/users/342607061059633153")
+                        $icon#github(url="github.com/esthedebeste")
+                    }
                 }
             }
         }
         footer "[source code @ " {
             a(href="https://github.com/esthedebeste/esthe.win") "github:esthedebeste/esthe.win"
         } " | " { $l10n(en="old site" nl="oude site") } " @ " { a(href="https://site2223.esthe.win") "site2223.esthe.win" } "]"
+        $space
     }
 }

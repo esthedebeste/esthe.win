@@ -105,9 +105,9 @@ float color(vec2 xy) {
 }
 
 void main() {
-    vec2 p = (gl_FragCoord.xy / iResolution.xy) * 2.0 - 1.0; // 0..1 to -1..1
+    vec2 p = (gl_FragCoord.xy / max(iResolution.x, iResolution.y)) * 2.0 - 1.0; // screen coords to -1..1, aspect ratio corrected
 
-    vec2 step = vec2(1.3, 1.7);
+    const vec2 step = vec2(1.3, 1.7);
     float n = color(p);
     n += 0.5 * color(p * 2.0 - step);
     n += 0.25 * color(p * 4.0 - 2.0 * step);
