@@ -1,0 +1,3 @@
+for (language of OTHER_LANGUAGES) {
+    link(rel="alternate" href=`/${language}${path}` hreflang=(language) type="text/html")
+}

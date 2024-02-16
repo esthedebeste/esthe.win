@@ -1,0 +1,48 @@
+$$altlangs from "../lib/AltLangs.pog"
+
+!doctype(html)
+// unknown language
+html(lang) {
+    head {
+        script {
+            const pn = location.pathname
+            switch(navigator.language.replace(/-.*/, "")) {
+                case "nl":
+                    location.pathname = "/nl" + pn
+                    break
+                default:
+                    location.pathname = "/en" + pn
+            }
+        }
+        style {
+            html {
+                font-family: sans-serif;
+            }
+            img {
+                width: 5em;
+                height: 3em;
+                object-fit: fill;
+            }
+        }
+        $altlangs
+        link(rel="shortcut icon" href="/favicon.jpg" type="image/jpeg")
+        title "esthe win!! - redirecting..."
+
+    }
+    body {
+        h1(lang=en) "Redirecting..."
+        h1(lang=nl) "Door aan het verwijzen..."
+        p(lang=en) "If you are not redirected, please click on one of the following links:"
+        p(lang=nl) "Als je niet wordt doorverwezen, klik dan op een van de volgende links:"
+        $$language(id url) {
+            a(href=`/${url}${path}` title=(id)) {
+                `${id}` br
+                img.icon(src=`/icons/${id}.svg`)
+            }
+        }
+        ul {
+            li { $language#nederlands(url=nl) }
+            li { $language#english(url=en) }
+        }
+    }
+}

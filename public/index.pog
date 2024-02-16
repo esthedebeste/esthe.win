@@ -1,11 +1,19 @@
 $$space from "../lib/Space.pog"
+$$altlangs from "../lib/AltLangs.pog"
+$$l10n(en nl) {
+    if (language === "en") 
+        `${en}`
+    else 
+        `${nl}`
+}
 
 !doctype(html)
-html(lang=en) {
+html(lang=(language)) {
     head {
         meta(charset="UTF-8")
         meta(name="viewport" content="width=device-width, initial-scale=1.0")
-        link(rel="shortcut icon" href="./favicon.jpg" type="image/jpeg")
+        $altlangs
+        link(rel="shortcut icon" href="/favicon.jpg" type="image/jpeg")
         title "esthe win!!"
         style {
 			body {
@@ -49,7 +57,6 @@ html(lang=en) {
 
             .icon {
                 height: 1em;
-                width: 1em;
                 vertical-align: middle;
             }
 
@@ -67,14 +74,35 @@ html(lang=en) {
             
             .totp progress {
                 position: absolute;
-                transform: translateY(50%);
+                transform: translateY(100%);
                 bottom: 0;
                 left: 0;
                 width: 100%;
                 height: 5px;
                 border: none;
-                filter: contrast(5) hue-rotate(45deg);
-                outline: solid 1px #00f;
+                outline: solid 1px #ad00c7;
+                background-color: #fff;
+                -webkit-appearance: none;
+            }
+
+            .totp progress::-moz-progress-bar {
+                background-color: #ad00c7;
+            }
+
+            .totp progress::-webkit-progress-value {
+                background-color: #ad00c7;
+            }
+
+            .totp progress::-webkit-progress-bar {
+                background-color: #fff;
+            }
+
+            .right {
+                float: right;
+            }
+
+            ::selection {
+                background-color: #b00b1355;
             }
         }
     }
@@ -82,42 +110,44 @@ html(lang=en) {
         $space
 
         main {
-            $$icon(id url) {
-                if(url) {
-                    a(href=`https://${url}` target="_blank") {
-                        img.icon(src=`/icons/${id}.svg` (id))
-                    }
-                } else {
-                    img.icon(src=`/icons/${id}.svg` (id))
-                }
-            }
-
-            img(src="./WAVE.gif" alt="hyper wave gif" width="216" height="128" align="right")
+            img.right(src="/WAVE.gif" alt="hyper wave gif" width="216" height="128")
             h1 "esthe win!!" with script {
                 setInterval(() => {
                     h1.style.color = `hsl(${(Date.now() / 1000 * 25 + 180) % 360}, 100%, 50%)`
                 }, 1000 / 30)
             }
-
-            p
-                "welcome to esther winsser's little corner! " { $icon#bisexual $icon#transgender br }
-                "i'm a dutch programmer who loves generic programming." { br }
-                "some languages i know are " {
-                    $icon#svelte(url="svelte.dev")
-                    $icon#css(url="https://developer.mozilla.org/docs/Web/CSS")
-                    $icon#javascript(url="developer.mozilla.org/docs/Web/JavaScript")
-                    $icon#typescript(url="typescriptlang.org")
-                    $icon#civet(url="civet.dev")
-                    $icon#go(url="go.dev")
-                    $icon#rust(url="rust-lang.org")
-                    $icon(id="C++" url="cppreference.com")
-                    $icon#fy(url="github.com/esthedebeste/fylang")
-                    $icon#java(url="java.com")
-                    $icon#kotlin(url="kotlinlang.org")
-                    $icon#c-sharp(url="docs.microsoft.com/dotnet/csharp")
-                    $icon#python(url="python.org")
-                    $icon#dutch(url="wikipedia.org/wiki/Nederlands")
+            $$icon(id url) {
+                if(url) {
+                    a(href=`https://${url}` target="_blank") {
+                        img.icon(src=`/icons/${id}.svg` title=(id) alt=(id))
+                    }
+                } else {
+                    img.icon(src=`/icons/${id}.svg` title=(id) alt=(id))
                 }
+            }
+
+            p {
+                $l10n(en="welcome to esther winsser's little corner! " nl="welkom in esther winsser's hoekje op 't internet! ")
+                $icon#bisexual $icon#transgender br
+                $l10n(en="i'm a dutch programmer." nl="ik ben een nederlandse programmeur.")
+                br
+                $l10n(en="some languages i know: " nl="wat talen die ik ken: ")
+                $icon#svelte(url="svelte.dev")
+                $icon#css(url="developer.mozilla.org/docs/Web/CSS")
+                $icon#javascript(url="developer.mozilla.org/docs/Web/JavaScript")
+                $icon#typescript(url="typescriptlang.org")
+                $icon#civet(url="civet.dev")
+                $icon#go(url="go.dev")
+                $icon#rust(url="rust-lang.org")
+                $icon(id="C++" url="cppreference.com")
+                $icon#fy(url="github.com/esthedebeste/fylang")
+                $icon#java(url="java.com")
+                $icon#kotlin(url="kotlinlang.org")
+                $icon#c-sharp(url="docs.microsoft.com/dotnet/csharp")
+                $icon#python(url="python.org")
+                $icon#nederlands(url="nl.wikipedia.org/wiki/Nederlands")
+                $icon#english(url="en.wikipedia.org/wiki/English_language")
+            }
 
             h2.nom { a(href="https://npmjs.com/package/@esthe/totp" target="_blank") "totp" }
             p.totp "code: " { 
@@ -130,19 +160,19 @@ html(lang=en) {
                         generate()
                     })
                 } br
-                label#totp-label(for="totp-progress") "time: 0 seconds"
-                progress(max="30000" value="0") with script {
-                    const label = document.getElementById("totp-label")
+                label#totp-label(for="totp-progress") { $l10n(en="time: " nl="tijd: ") span "0" $l10n(en=" seconds" nl=" seconden") }
+                progress#totp-progress(max="30000" value="0") with script {
+                    const label = document.querySelector("#totp-label span")
                     setInterval(() => {
                         const totpProgress = Date.now() % 30_000
                         progress.value = totpProgress
-                        label.textContent = `time: ${30 - Math.floor(totpProgress / 1000)} seconds`
+                        label.textContent = 30 - Math.floor(totpProgress / 1000)
                     }, 1000 / 30)
                 }
             }
         }
-        footer "[source @ " {
+        footer "[source code @ " {
             a(href="https://github.com/esthedebeste/esthe.win") "github:esthedebeste/esthe.win"
-        } " | old site @ " { a(href="https://site2223.esthe.win") "site2223.esthe.win" } "]"
+        } " | " { $l10n(en="old site" nl="oude site") } " @ " { a(href="https://site2223.esthe.win") "site2223.esthe.win" } "]"
     }
 }
