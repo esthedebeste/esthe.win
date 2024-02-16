@@ -128,7 +128,7 @@ html(lang=(language)) {
         main {
             picture.right {
                 source(srcset="/WAVE.webp" type="image/webp")
-                img(src="/WAVE.gif" alt=(l10n({ en: "gif of a enthusiastically waving smiley", nl: "gif van een smiley die enthousiast zwaait" })) width="216" height="122")
+                img(src="/WAVE.gif" alt=(l10n({ en: "gif of a enthusiastically waving smiley", nl: "gif van een smiley die enthousiast zwaait" })) width="216" height="115")
             }
 
             h1 "esthe win!!" with script {
