@@ -7,7 +7,7 @@
 //               Distributed under the MIT License. See LICENSE file.
 //               https://github.com/ashima/webgl-noise
 //               https://github.com/stegu/webgl-noise
-precision highp float;
+precision lowp float;
 
 vec3 mod289(vec3 x) {
     return x - floor(x * (1.0 / 289.0)) * 289.0;
@@ -98,6 +98,7 @@ float snoise(vec3 v) {
 uniform float iTime;
 uniform vec2 iResolution;
 uniform float iScale;
+uniform int iDetail;
 uniform vec3 iColorMultiplier;
 uniform vec3 iColorOffset;
 float color(vec2 xy) {
@@ -109,11 +110,16 @@ void main() {
 
     const vec2 step = vec2(1.3, 1.7);
     float n = color(p);
-    n += 0.5 * color(p * 2.0 - step);
-    n += 0.25 * color(p * 4.0 - 2.0 * step);
-    n += 0.125 * color(p * 8.0 - 3.0 * step);
-    n += 0.0625 * color(p * 16.0 - 4.0 * step);
-    n += 0.03125 * color(p * 32.0 - 5.0 * step);
+    if(iDetail > 0)
+        n += 0.5 * color(p * 2.0 - step);
+    if(iDetail > 1)
+        n += 0.25 * color(p * 4.0 - 2.0 * step);
+    if(iDetail > 2)
+        n += 0.125 * color(p * 8.0 - 3.0 * step);
+    if(iDetail > 3)
+        n += 0.0625 * color(p * 16.0 - 4.0 * step);
+    if(iDetail > 4)
+        n += 0.03125 * color(p * 32.0 - 5.0 * step);
 
     gl_FragColor.xyz = vec3(0.5 + 0.5 * vec3(n, n, n)) * iColorMultiplier + iColorOffset;
     gl_FragColor.a = 1.0;

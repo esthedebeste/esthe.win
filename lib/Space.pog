@@ -9,10 +9,9 @@ canvas(aria-hidden="true" data-fragment-shader=(fragmentShader) data-vertex-shad
 			return 0
 		}
 
-		let r, g, b
-		r = tToRgb(h + 1 / 3)
-		g = tToRgb(h)
-		b = tToRgb(h - 1 / 3)
+		const r = tToRgb(h + 1 / 3)
+		const g = tToRgb(h)
+		const b = tToRgb(h - 1 / 3)
 		return [r, g, b]
 	}
 
@@ -29,6 +28,7 @@ canvas(aria-hidden="true" data-fragment-shader=(fragmentShader) data-vertex-shad
 	const scale = 5
 
 	const goalFps = 24
+	const minFps = 15
 	const goalFrameTime = 1000 / goalFps
 
 	function createGlShader(gl, type, glsl) {
@@ -63,6 +63,7 @@ canvas(aria-hidden="true" data-fragment-shader=(fragmentShader) data-vertex-shad
 		a_position: gl.getAttribLocation(program, "a_position"),
 		iTime: gl.getUniformLocation(program, "iTime"),
 		iScale: gl.getUniformLocation(program, "iScale"),
+		iDetail: gl.getUniformLocation(program, "iDetail"),
 		iResolution: gl.getUniformLocation(program, "iResolution"),
 		iColorMultiplier: gl.getUniformLocation(program, "iColorMultiplier"),
 		iColorOffset: gl.getUniformLocation(program, "iColorOffset"),
@@ -75,9 +76,30 @@ canvas(aria-hidden="true" data-fragment-shader=(fragmentShader) data-vertex-shad
 	const START_TIME = Date.now()
 	let pTime = 0
 	let animId = requestAnimationFrame(draw)
+	let DETAIL = 5
+	let LAST_DETAIL_CHANGE = 0
+	let drew = []
+	let VISIBLE_TIME = +(document.visibilityState === "visible")
+	let HIDDEN_TIME = +(document.visibilityState === "hidden")
+	document.addEventListener("visibilitychange", () => {
+		const t = Date.now() - START_TIME
+		if(document.visibilityState === "visible")
+			VISIBLE_TIME = t
+		else
+			HIDDEN_TIME = t
+	})
 	function draw(time) {
 		animId = requestAnimationFrame(draw)
-		if (time - pTime < goalFrameTime) return
+		const frameTime = time - pTime
+		if (frameTime < goalFrameTime) return
+		while(drew[0] < time - 1000) drew.shift() // remove old frames
+		drew.push(time)
+		const FPS = drew.length
+		if(FPS < minFps && time - LAST_DETAIL_CHANGE > 1000 && VISIBLE_TIME > HIDDEN_TIME && time - VISIBLE_TIME > 2000) {
+			DETAIL = Math.max(0, DETAIL - 1)
+			LAST_DETAIL_CHANGE = time
+			console.log("lowering detail to", DETAIL, "at", time, "because fps is", FPS)
+		}
 		pTime = time
 		if (!gl) throw new Error("no webgl")
 		const w = width
@@ -92,8 +114,9 @@ canvas(aria-hidden="true" data-fragment-shader=(fragmentShader) data-vertex-shad
 		const col = hueToRgb(timeOffset / 360)
 		const [ro, go, bo] = col.map(x => x * 0.02)
 		const [rm, gm, bm] = col.map(x => x * 0.2)
-		gl.uniform1f(locations.iTime, time * 1e-3 * 0.1)
+		gl.uniform1f(locations.iTime, time * 1e-3 * 0.1 + 0.5)
 		gl.uniform1f(locations.iScale, scale)
+		gl.uniform1i(locations.iDetail, DETAIL)
 		gl.uniform2f(locations.iResolution, w, h)
 		gl.uniform3f(locations.iColorOffset, ro, go, bo)
 		gl.uniform3f(locations.iColorMultiplier, rm, gm, bm)
@@ -101,17 +124,16 @@ canvas(aria-hidden="true" data-fragment-shader=(fragmentShader) data-vertex-shad
 		gl.drawArrays(gl.TRIANGLES, 0, 3)
 	}
 
-	function onElementRemoved(element, callback) {
-		new MutationObserver(function(mutations) {
-			if(!document.body.contains(element)) {
-				callback();
-				this.disconnect();
-			}
-		}).observe(element.parentElement, {childList: true})
-	}
-
-	onElementRemoved(canvas, () => {
-		document.removeEventListener("resize", resizeHandler)
-		cancelAnimationFrame(animId)
-	})
+	// function onElementRemoved(element, callback) {
+	// 	new MutationObserver(function(mutations) {
+	// 		if(!document.body.contains(element)) {
+	// 			callback();
+	// 			this.disconnect();
+	// 		}
+	// 	}).observe(element.parentElement, {childList: true})
+	// }
+	// onElementRemoved(canvas, () => {
+	// 	document.removeEventListener("resize", resizeHandler)
+	// 	cancelAnimationFrame(animId)
+	// })
 }

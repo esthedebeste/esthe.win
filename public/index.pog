@@ -1,9 +1,9 @@
 $$space from "../lib/Space.pog"
 $$altlangs from "../lib/AltLangs.pog"
 $$l10n(en nl) {
-    if (language === "en") 
+    if (language === "en")
         `${en}`
-    else 
+    else
         `${nl}`
 }
 
@@ -19,7 +19,7 @@ html(lang=(language)) {
 			body {
 				background-color: #000;
 				color: #f0f;
-				font-family: cursive;
+				font-family: "Comic Sans MS", serif;
                 display: flex;
                 flex-direction: column;
                 align-items: center;
@@ -64,16 +64,12 @@ html(lang=(language)) {
                 vertical-align: middle;
             }
 
-            #stuff > * {
-                margin-bottom: 1em;
-            }
-
             #contact img {
                 height: 1.5em;
                 margin: 0 0.25ch;
             }
 
-            #stuff h2 {
+            h2 {
                 margin: 0;
                 padding: 0;
                 width: fit-content;
@@ -84,8 +80,9 @@ html(lang=(language)) {
                 padding: 0;
                 position: relative;
                 width: fit-content;
+                margin-bottom: 5px;
             }
-            
+
             .totp progress {
                 position: absolute;
                 transform: translateY(100%);
@@ -122,19 +119,44 @@ html(lang=(language)) {
             img.icon[alt="bisexual"], img.icon[alt="transgender"], img.icon[alt="english"], img.icon[alt="nederlands"] {
                 width: calc(5em / 3);
             }
+
+            main > * {
+                margin-top: 0.5em;
+            }
+
+            main > p, main > div {
+                background-color: #0001;
+                border: 1px solid #f0f2;
+                border-radius: 0.5em;
+                padding: 0.5em;
+            }
+
+            img#wave {
+                width: min(100vw - 22ch, 216px);
+                aspect-ratio: 216 / 128;
+            }
         }
     }
     body {
         main {
+            script {
+                window.vsync = (fn) => {
+                    const frame = (time) => {
+                        fn(time)
+                        requestAnimationFrame(frame)
+                    }
+                    requestAnimationFrame(frame)
+                }
+            }
             picture.right {
                 source(srcset="/WAVE.webp" type="image/webp")
-                img(src="/WAVE.gif" alt=(l10n({ en: "gif of a enthusiastically waving smiley", nl: "gif van een smiley die enthousiast zwaait" })) width="216" height="115")
+                img#wave(src="/WAVE.gif" alt=(l10n({ en: "gif of a enthusiastically waving smiley", nl: "gif van een smiley die enthousiast zwaait" })))
             }
 
             h1 "esthe win!!" with script {
-                setInterval(() => {
+                vsync(() => {
                     h1.style.color = `hsl(${(Date.now() / 1000 * 25 + 180) % 360}, 100%, 50%)`
-                }, 1000 / 30)
+                })
             }
 
             $$icons {
@@ -153,7 +175,7 @@ html(lang=(language)) {
             }
 
             p {
-                $l10n(en="welcome to esther winsser's little corner! " nl="welkom in esther winsser's hoekje op 't internet! ")
+                $l10n(en="welcome to esther winsser's corner on the internet! " nl="welkom in esther winsser's hoekje op 't internet! ")
                 $icons { $icon#bisexual $icon#transgender } br
                 $l10n(en="i'm a dutch programmer :p" nl="ik ben een nederlandse programmeur :p")
                 br
@@ -181,48 +203,48 @@ html(lang=(language)) {
                 }
             }
 
-            div#stuff {
-                div#totp {
-                    h2 { a(href="https://npmjs.com/package/@esthe/totp" target="_blank") "totp" }
-                    p.totp { 
-                        small { a(href=(TOTP_SECRET_URL) target="_blank") { $l10n(en="add to this phone" nl="voeg toe aan deze mobiel") } } " / " { a(href=`https://chart.googleapis.com/chart?cht=qr&chl=${encodeURIComponent(TOTP_SECRET_URL)}&chs=512x512&chld=H|1` target="_blank") "qr code" br }
-                    } "code: " { 
-                        span(data-secret=(TOTP_SECRET)) `${await generateTOTP(TOTP_SECRET)}` with script {
-                            import("/totp.js").then(({ generateTOTP }) => {
-                                async function generate() {
-                                    span.textContent = await generateTOTP(dataset.secret)
-                                    setTimeout(generate, 30_000 - (Date.now() % 30_000))
-                                }
-                                generate()
-                            })
-                        } br
-                        label#totp-label(for="totp-progress") { $l10n(en="time: " nl="tijd: ") span "0" $l10n(en=" seconds" nl=" seconden") }
-                        progress#totp-progress(max="30000" value="0") with script {
-                            const label = document.querySelector("#totp-label span")
-                            setInterval(() => {
-                                const totpProgress = Date.now() % 30_000
-                                progress.value = totpProgress
-                                label.textContent = 30 - Math.floor(totpProgress / 1000)
-                            }, 1000 / 30)
-                        }
+            div#totp {
+                h2 { a(href="https://npmjs.com/package/@esthe/totp" target="_blank") "totp" }
+                p.totp {
+                    small { a(href=(TOTP_SECRET_URL) target="_blank") { $l10n(en="add to this phone" nl="voeg toe aan deze mobiel") } } " / " { a(href=`https://chart.googleapis.com/chart?cht=qr&chl=${encodeURIComponent(TOTP_SECRET_URL)}&chs=512x512&chld=H|1` target="_blank") "qr code" br }
+                } "code: " {
+                    span(data-secret=(TOTP_SECRET)) `${await generateTOTP(base32Decode(TOTP_SECRET))}` with script {
+                        import("/totp.js").then(({ generateTOTP, base32Decode }) => {
+                            const secret = base32Decode(dataset.secret)
+                            async function generate() {
+                                span.textContent = await generateTOTP(secret)
+                                setTimeout(generate, 30_000 - (Date.now() % 30_000))
+                            }
+                            generate()
+                        })
+                    } br
+                    label#totp-label(for="totp-progress") { $l10n(en="time: " nl="tijd: ") span "0" $l10n(en=" seconds" nl=" seconden") }
+                    progress#totp-progress(max="30000" value="0") with script {
+                        const label = document.querySelector("#totp-label span")
+                        vsync(() => {
+                            const totpProgress = Date.now() % 30_000
+                            progress.value = totpProgress
+                            label.textContent = 30 - Math.floor(totpProgress / 1000)
+                        })
                     }
                 }
-                $$antibot {
-                    span(style=`font-size: ${Math.random() / 1000}px`) {
-                        $l10n(en="!!Unfortunately, you cannot copy my e-mail. This is so I don't get bot emails.!!" nl="!!Helaas kan je mijn e-mail niet kopiëren. Dit is zodat ik geen spam emails krijg van bots.!!")
-                    }
+            }
+            $$antibot {
+                span(style=`font-size: ${Math.random() / 1000}px`) {
+                    $l10n(en="!!Unfortunately, you cannot copy my e-mail. This is so I don't get bot emails.!!" nl="!!Helaas kan je mijn e-mail niet kopiëren. Dit is zodat ik geen spam emails krijg van bots.!!")
                 }
-                div#contact {
-                    h2 "contact"
-                } `e​s​t​h​e​r​.​w` { $antibot } `​i​n​s​s​e​r​ (${l10n({en:"at", nl: "apenstaartje"})}) g​m​a​i​l (${l10n({en:"dot", nl: "puntje"})}) ​c​o​m !!!` {
-                    br
-                    $icons {
-                        $icon#mastodon(url="elk.zone/chaos.social/@esthe")
-                        $icon#twitch(url="twitch.tv/esthedebeste")
-                        $icon#twitter(url="twitter.com/esthedebeste")
-                        $icon#discord(url="discord.com/users/342607061059633153")
-                        $icon#github(url="github.com/esthedebeste")
-                    }
+            }
+            div#contact {
+                h2 "contact"
+            } `e​s​t​h​e​r​.​w` { $antibot } `​i​n​s​s​e​r​ (${l10n({en:"at", nl: "apenstaartje"})}) g​m​a​i​l (${l10n({en:"dot", nl: "puntje"})}) ​c​o​m !!!` {
+                br
+                $icons {
+                    $icon#mastodon(url="elk.zone/chaos.social/@esthe")
+                    $icon#twitch(url="twitch.tv/esthedebeste")
+                    $icon#twitter(url="twitter.com/esthedebeste")
+                    $icon#instagram(url="instagram.com/esthedebeste")
+                    $icon#discord(url="discord.com/users/342607061059633153")
+                    $icon#github(url="github.com/esthedebeste")
                 }
             }
         }

@@ -1,4 +1,4 @@
-import { generateTOTP } from "@esthe/totp"
+import { base32Decode, generateTOTP } from "@esthe/totp"
 import * as html from "html-minifier-terser"
 import { watch } from "node:fs"
 import {
@@ -32,6 +32,7 @@ const POGGIES_DATA = {
 	fragmentShader,
 	vertexShader,
 	generateTOTP,
+	base32Decode,
 	LANGUAGES,
 	TOTP_SECRET,
 	TOTP_SECRET_URL,
