@@ -1,0 +1,110 @@
+$$space from "../lib/Space.pog"
+$$altlangs from "../lib/AltLangs.pog"
+$$l10n(en nl) {
+    if (language === "en")
+        `${en}`
+    else
+        `${nl}`
+}
+
+!doctype(html)
+html(lang=(language)) {
+    head {
+        meta(charset="UTF-8")
+        meta(name="viewport" content="width=device-width, initial-scale=1.0")
+        $altlangs
+        link(rel="shortcut icon" href="/favicon.jpg" type="image/jpeg")
+        title "null"
+        style {
+            body {
+                color: white;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                height: 100vh;
+                margin: 0;
+                font-size: 2rem;
+                font-family: "Constantia", serif;
+            }
+
+            #nothing {
+                all: unset;
+                cursor: pointer;
+                padding-bottom: 1px;
+                text-shadow: 0 0 1em red, 0 0 1em red;
+                transition: color 0.5s;
+                font-weight: 600;
+                font-style: italic;
+            }
+
+            #nothing:hover {
+                padding-bottom: 0;
+                border-bottom: 1px solid red;
+                color: #fcc;
+            }
+
+            .red #nothing:hover {
+                color: red;
+            }
+
+            main {
+                color: white;
+                transition: all 0.5s;
+                text-shadow: 0 0 1em #fff7;
+            }
+
+            .red {
+                color: red;
+                text-shadow: 0 0 1em #f00f;
+            }
+
+            #blinky::after {
+                animation: blinker 2s cubic-bezier(1, 0, 0, 1) infinite;
+                display: inline-block;
+                content: "";
+                height: .8em;
+                margin-left: 1px;
+                width: 1px;
+                background-color: currentColor;
+                opacity: 0;
+            }
+
+            @keyframes blinker {
+            50% {
+                opacity: 1;
+            }
+            }
+        }
+    }
+    body {
+        script {
+            window.rgb = [0.6, 0, 0]
+        }
+        $space
+        main {
+            $l10n(en="you couldn't have done " nl="je kon ") 
+            button#nothing { $l10n(en="anything" nl="niets")  } 
+            span#end { $l10n(en="." nl=" doen.") }
+            span#blinky
+        }
+        script {{
+            const sleep = ms => new Promise(r => setTimeout(r, ms))
+            const main = document.querySelector("main")
+            const nothing = document.querySelector("#nothing")
+            const end = document.querySelector("#end")
+            const blinky = document.querySelector("#blinky")
+            nothing.addEventListener("click", async () => {
+                await sleep(1000)
+                blinky.style.color = "red";
+                main.classList.add("red")
+                await sleep(1000)
+                end.textContent = end.textContent.slice(0, -1)
+                await sleep(1000)
+                end.textContent += "?"
+                await sleep(3000)
+                main.innerHTML = ""
+            }, { once: true })
+        }}
+    }
+}

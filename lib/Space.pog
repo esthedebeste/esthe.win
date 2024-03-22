@@ -1,4 +1,15 @@
-canvas(aria-hidden="true" data-fragment-shader=(fragmentShader) data-vertex-shader=(vertexShader)) with script {
+style {
+	canvas.space {
+		position: fixed;
+		left: 0;
+		top: 0;
+		width: 100vw;
+		height: 100vh;
+		z-index: -1;
+	}
+}
+
+canvas.space(aria-hidden="true" data-fragment-shader=(fragmentShader) data-vertex-shader=(vertexShader)) with script {
 	function hueToRgb(h) {
 		function tToRgb(t) {
 			if (t < 0) t += 1
@@ -110,8 +121,7 @@ canvas(aria-hidden="true" data-fragment-shader=(fragmentShader) data-vertex-shad
 		gl.vertexAttribPointer(locations.a_position, 2, gl.FLOAT, false, 0, 0)
 		gl.enableVertexAttribArray(locations.a_position)
 
-		const timeOffset = (time + START_TIME) / 1000 * 25 % 360
-		const col = hueToRgb(timeOffset / 360)
+		const col = window.rgb ?? hueToRgb(((time + START_TIME) / 1000 * 25 % 360) / 360)
 		const [ro, go, bo] = col.map(x => x * 0.02)
 		const [rm, gm, bm] = col.map(x => x * 0.2)
 		gl.uniform1f(locations.iTime, time * 1e-3 * 0.1 + 0.5)
@@ -123,17 +133,4 @@ canvas(aria-hidden="true" data-fragment-shader=(fragmentShader) data-vertex-shad
 
 		gl.drawArrays(gl.TRIANGLES, 0, 3)
 	}
-
-	// function onElementRemoved(element, callback) {
-	// 	new MutationObserver(function(mutations) {
-	// 		if(!document.body.contains(element)) {
-	// 			callback();
-	// 			this.disconnect();
-	// 		}
-	// 	}).observe(element.parentElement, {childList: true})
-	// }
-	// onElementRemoved(canvas, () => {
-	// 	document.removeEventListener("resize", resizeHandler)
-	// 	cancelAnimationFrame(animId)
-	// })
 }

@@ -1,0 +1,27 @@
+$$shell from "../lib/Shell.pog"
+$$l10n(en nl) {
+    if (language === "en")
+        `${en}`
+    else
+        `${nl}`
+}
+
+$shell {
+    style {
+        main div {
+            margin: 1em 0;
+            text-align: center;
+        }
+
+        main div * {
+            margin: 0;
+        }
+    }
+
+    div {
+        h1 "WIP!"
+        p {
+            $l10n(en="still working on this one." nl="hier werk ik nog even aan.")
+        }
+    }
+}

@@ -1,0 +1,70 @@
+$$shell from "../lib/Shell.pog"
+$$l10n(en nl) {
+    if (language === "en")
+        `${en}`
+    else
+        `${nl}`
+}
+
+$shell {
+    style {
+        main {
+            max-width: 80vw;
+        }
+
+        #everything {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1em;
+        }
+
+        @media (max-width: 840px) {
+            #everything {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .icon {
+            vertical-align: text-bottom;
+        }
+
+        .something h2 {
+            margin: 0;
+        }
+    }
+
+    $$something(head href) {
+        div.something {
+            h2 { a((href) target="_blank") { slot!(head) } }
+            slot!
+        }
+    }
+
+    h1 {
+        $l10n(en="My Work" nl="Mijn Werk")
+    }
+
+    section#everything {
+        $something(head={ $l10n(en="this website" nl="deze website") } href=`/${language}${path}`) {
+            $l10n(en="I built this site with my bare hands. Instead of HTML, I'm using my own templating language; " nl="Ik heb deze site helemaal zelf in elkaar gezet. Ik gebruik hiervoor i.p.v. HTML mijn zelfgemaakte templatingtaal; ")
+            a(href="https://github.com/esthedebeste/poggies" target="_blank") { img.icon(alt="poggies icon" src="https://cdn.betterttv.net/emote/5b457bbd0485f43277cecac0/1x") } "poggies"
+            $l10n(en="." nl=".")
+        }
+        $something(head={ $l10n(en="wurdle" nl="wortel") } href="https://wurdle.esthe.win") {
+            a(href="https://wurdle.esthe.win" target="_blank") { $l10n(en="Wurdle" nl="Wortel") }
+            $l10n(en=" is my wordle clone, with a new random puzzle at any time, instead of daily unique puzzles." nl=" is mijn versie van wordle. Wortel kan oneindige willekeurige puzzels maken, in plaats van maar één per dag.")
+        }
+        $something(head="65565" href="https://65565.esthe.win/") {
+            a(href="https://65565.esthe.win/" target="_blank") "65565"
+            $l10n(en=" is my 2048 clone! pretty simple stuff." nl=" is mijn versie van het spel '2048'.")
+        }
+        $something(head="ts2civet" href="https://ts2civet.esthe.win/") {
+            a(href="https://ts2civet.esthe.win/" target="_blank") "ts2civet"
+            $l10n(en=" is a 'compiler' that transforms " nl=" is een 'compiler' die ")
+            a(href="https://www.typescriptlang.org/" target="_blank") "typescript"
+            $l10n(en=" code into equivalent and concise " nl="-code omzet naar equivalente en kortere ")
+            a(href="https://civet.dev/" target="_blank") "civet"
+            $l10n(en=" code." nl="-code.")
+        }
+    }
+}
