@@ -54,8 +54,8 @@ $shell {
             a(href="https://wurdle.esthe.win" target="_blank") { $l10n(en="Wurdle" nl="Wortel") }
             $l10n(en=" is my wordle clone, with a new random puzzle at any time, instead of daily unique puzzles." nl=" is mijn versie van wordle. Wortel kan oneindige willekeurige puzzels maken, in plaats van maar één per dag.")
         }
-        $something(head="65565" href="https://65565.esthe.win/") {
-            a(href="https://65565.esthe.win/" target="_blank") "65565"
+        $something(head="65536" href="https://65536.esthe.win/") {
+            a(href="https://65536.esthe.win/" target="_blank") "65536"
             $l10n(en=" is my 2048 clone! pretty simple stuff." nl=" is mijn versie van het spel '2048'.")
         }
         $something(head="ts2civet" href="https://ts2civet.esthe.win/") {
