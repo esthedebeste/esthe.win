@@ -61,7 +61,7 @@ html(lang=(language)) {
             header nav > * {
                 margin-right: 1ch;
             }
-            
+
             header nav .lang {
                 margin-right: 0;
                 display: flex;
@@ -69,7 +69,7 @@ html(lang=(language)) {
                 justify-content: center;
                 padding-bottom: 6px;
             }
-            
+
             header nav .lang img {
                 width: calc(5em / 3);
             }
@@ -126,7 +126,7 @@ html(lang=(language)) {
                     display: none;
                 }
             }
-            
+
             footer {
                 margin-top: 0.5em;
             }
@@ -157,7 +157,7 @@ html(lang=(language)) {
                     a.lang(href=`/nl${path}`) { img(src="/icons/nederlands.svg" title="nederlands" alt="nederlands") }
                     a.lang(href=`/en${path}`) { img(src="/icons/english.svg" title="english" alt="english") }
                 }
-                
+
                 picture.right {
                     source(srcset="/WAVE.webp" type="image/webp")
                     img#wave(src="/WAVE.gif" alt=(l10n({ en: "gif of a enthusiastically waving smiley", nl: "gif van een smiley die enthousiast zwaait" })))
@@ -170,5 +170,13 @@ html(lang=(language)) {
             a(href="https://github.com/esthedebeste/esthe.win") "github:esthedebeste/esthe.win"
         } " | " { $l10n(en="old site" nl="oude site") } " @ " { a(href="https://site2223.esthe.win") "site2223.esthe.win" } "]"
         $space
+        script {
+            window.goatcounter = {
+                path(p) {
+                    return location.host + p
+                }
+            }
+        }
+        script(data-goatcounter="https://esther.goatcounter.com/count" async src="//gc.zgo.at/count.js")
     }
 }
