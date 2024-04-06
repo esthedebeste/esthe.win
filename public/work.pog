@@ -8,10 +8,6 @@ $$l10n(en nl) {
 
 $shell {
     style {
-        main {
-            max-width: 80vw;
-        }
-
         #everything {
             display: grid;
             grid-template-columns: 1fr 1fr;

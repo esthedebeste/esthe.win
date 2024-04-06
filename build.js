@@ -139,9 +139,11 @@ async function build() {
 }
 
 if (process.argv.includes("--dev")) {
+	let pbuild = null
 	async function cb() {
 		try {
-			await build()
+			if (pbuild) await pbuild
+			await (pbuild = build())
 		} catch (e) {
 			console.error(e)
 		}
