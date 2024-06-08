@@ -137,7 +137,7 @@ $shell {
 
     div#contact {
         h2 "contact"
-    } `e​s​t​h​e​r​.​w` { $antibot } `​i​n​s​s​e​r​ (${l10n({en:"at", nl: "apenstaartje"})}) g​m​a​i​l (${l10n({en:"dot", nl: "puntje"})}) ​c​o​m !!!` {
+    } `hel` { $antibot } `lo@esthe.win !!!` {
         br
         $icons {
             $icon#mastodon(url="elk.zone/chaos.social/@esthe")

@@ -435,5 +435,8 @@ html(lang=(language)) {
                         goatcounter.bind_events()
                 })
         }
+
+        //                                                                          vvvv path here
+        // todo: maybe img(src="https://esther.goatcounter.com/counter/%2Festhe.win%2Fen.svg?no_branding=1&amp;style=%23gcvc-border{fill%3A%230000%3Bstroke%3A%23f0f%3B}%23gcvc%20{fill%3A%23f0f%3B")
     }
 }
