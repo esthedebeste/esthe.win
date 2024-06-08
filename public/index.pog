@@ -137,7 +137,7 @@ $shell {
 
     div#contact {
         h2 "contact"
-    } `hel` { $antibot } `lo@esthe.win !!!` {
+    } `hello@esthe.win !!!` {
         br
         $icons {
             $icon#mastodon(url="elk.zone/chaos.social/@esthe")
