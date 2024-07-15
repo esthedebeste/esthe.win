@@ -105,7 +105,7 @@ $shell {
     div#totp {
         h2 { a(href="https://npmjs.com/package/@esthe/totp" target="_blank") "totp" }
         p.totp {
-            small { a(href=(TOTP_SECRET_URL) target="_blank") { $l10n(en="add to this phone" nl="voeg toe aan deze mobiel") } } " / " { a(href=`https://chart.googleapis.com/chart?cht=qr&chl=${encodeURIComponent(TOTP_SECRET_URL)}&chs=512x512&chld=H|1` target="_blank") "qr code" br }
+            small { a(href=(TOTP_SECRET_URL) target="_blank") { $l10n(en="add to this phone" nl="voeg toe aan deze mobiel") } } " / " { a(href="/totp.png" target="_blank") "qr code" br }
         } "code: " {
             span(data-secret=(TOTP_SECRET)) `${await generateTOTP(base32Decode(TOTP_SECRET))}` with script {
                 import("/totp.js").then(({ generateTOTP, base32Decode }) => {
