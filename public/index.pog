@@ -69,9 +69,9 @@ $shell {
             slot!
         }
     }
-    $$icon(id url) {
+    $$icon(id url target="_blank") {
         if(url) {
-            a(href=`https://${url}` target="_blank" role="listitem" title=(id)) {
+            a(href=`${url}` target=(target) role="listitem" title=(id)) {
                 img.icon(src=`/icons/${id}.svg` alt=(id))
             }
         } else {
@@ -80,25 +80,27 @@ $shell {
     }
 
     p {
-        $l10n(en="welcome to esther winsser's corner on the internet! " nl="welkom in esther winsser's hoekje op 't internet! ")
-        $icons { $icon#bisexual $icon#transgender } br
-        $l10n(en="i'm a dutch programmer :p" nl="ik ben een nederlandse programmeur :p")
+        $l10n(en="Welcome to Esther Winsser's website! " nl="Welkom in Esther Winsser's website! ")
         br
-        $l10n(en="some languages i know: " nl="wat talen die ik ken: ")
+        $l10n(en="I'm a Dutch computer scientist engineer in training @ TU Delft." nl="Ik ben een Nederlandse informatica-ingenieur in opleiding aan de TU Delft.")
+        br
+        $l10n(en="Some languages i know: " nl="Wat talen die ik ken: ")
         $icons {
-            $icon#svelte(url="svelte.dev")
-            $icon#css(url="developer.mozilla.org/docs/Web/CSS")
-            $icon#javascript(url="developer.mozilla.org/docs/Web/JavaScript")
-            $icon#typescript(url="typescriptlang.org")
-            $icon#civet(url="civet.dev")
-            $icon#go(url="go.dev")
-            $icon#rust(url="rust-lang.org")
-            $icon(id="C++" url="cppreference.com")
-            $icon#fy(url="github.com/esthedebeste/fylang")
-            $icon#java(url="java.com")
-            $icon#kotlin(url="kotlinlang.org")
-            $icon#c-sharp(url="docs.microsoft.com/dotnet/csharp")
-            $icon#python(url="python.org")
+            $icon(id="C++" url="https://cppreference.com")
+            $icon#rust(url="https://rust-lang.org")
+            $icon#go(url="https://go.dev")
+            $icon#java(url="https://java.com")
+            $icon#kotlin(url="https://kotlinlang.org")
+            $icon#c-sharp(url="https://docs.microsoft.com/dotnet/csharp")
+            $icon#python(url="https://python.org")
+            $icon#svelte(url="https://svelte.dev")
+            $icon#css(url="https://developer.mozilla.org/docs/Web/CSS")
+            $icon#javascript(url="https://developer.mozilla.org/docs/Web/JavaScript")
+            $icon#typescript(url="https://typescriptlang.org")
+            $icon#civet(url="https://civet.dev")
+            $icon#fy(url="https://github.com/esthedebeste/fylang")
+            $icon#nederlands(url=`/nl${path}` target="")
+            $icon#english(url=`/en${path}` target="")
         }
     }
 
@@ -129,23 +131,15 @@ $shell {
         }
     }
 
-    $$antibot {
-        span(style=`font-size: ${Math.random() / 1000}px`) {
-            $l10n(en="!!Unfortunately, you cannot copy my e-mail. This is so I don't get bot emails.!!" nl="!!Helaas kan je mijn e-mail niet kopiëren. Dit is zodat ik geen spam emails krijg van bots.!!")
-        }
-    }
-
     div#contact {
         h2 "contact"
     } `hello@esthe.win !!!` {
         br
         $icons {
-            $icon#mastodon(url="elk.zone/chaos.social/@esthe")
-            $icon#twitch(url="twitch.tv/esthedebeste")
-            $icon#twitter(url="twitter.com/esthedebeste")
-            $icon#instagram(url="instagram.com/esthedebeste")
-            $icon#discord(url="discord.com/users/342607061059633153")
-            $icon#github(url="github.com/esthedebeste")
+            $icon#mastodon(url="https://elk.zone/chaos.social/@esthe")
+            $icon#instagram(url="https://instagram.com/esthedebeste")
+            $icon#twitter(url="https://twitter.com/esthedebeste")
+            $icon#github(url="https://github.com/esthedebeste")
         }
     }
 }

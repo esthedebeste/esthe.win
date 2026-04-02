@@ -98,7 +98,7 @@ async function renderPoggies(file, from, language) {
 }
 
 async function build() {
-	await rm("dist", { recursive: true, force: true })
+	await rm("dist", { recursive: true, force: true, maxRetries: 3 })
 	await mkdir("dist", { recursive: true })
 	await copyFile("node_modules/@esthe/totp/dist/index.js", "dist/totp.js")
 	const htmls = []
@@ -142,8 +142,12 @@ if (process.argv.includes("--dev")) {
 	let pbuild = null
 	async function cb() {
 		try {
-			if (pbuild) await pbuild
+			if (pbuild) 
+				try {
+					await pbuild
+				} finally {}
 			await (pbuild = build())
+			pbuild = null
 		} catch (e) {
 			console.error(e)
 		}

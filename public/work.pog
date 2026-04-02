@@ -27,10 +27,30 @@ $shell {
         .something h2 {
             margin: 0;
         }
+
+        .tags {
+            display: inline;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            float: right;
+        }
+
+        .tag {
+            font-size: smaller;
+            font-style: italic;
+        }
     }
 
-    $$something(head href) {
+    $$something(head href tags=[]) {
         div.something {
+            ul.tags {
+                for(tag of tags) { 
+                    span.tag {
+                        if(tag != tags[0]) { ", " }
+                    } `${tag}`
+                }
+            }
             h2 { a((href) target="_blank") { slot!(head) } }
             slot!
         }
@@ -41,26 +61,38 @@ $shell {
     }
 
     section#everything {
-        $something(head={ $l10n(en="this website" nl="deze website") } href=`/${language}${path}`) {
-            $l10n(en="I built this site with my bare hands. Instead of HTML, I'm using my own templating language; " nl="Ik heb deze site helemaal zelf in elkaar gezet. Ik gebruik hiervoor i.p.v. HTML mijn zelfgemaakte templatingtaal; ")
+        $something(head={ $l10n(en="this website" nl="deze website") } href=`/${language}${path}` tags=(["Web", "Open-Source"])) {
+            $l10n(en="I built this site with my own templating language; " nl="Ik heb deze site gemaakt met mijn zelfgemaakte templatingtaal; ")
             a(href="https://github.com/esthedebeste/poggies" target="_blank") { img.icon(alt="poggies icon" src="https://cdn.betterttv.net/emote/5b457bbd0485f43277cecac0/1x") } "poggies"
             $l10n(en="." nl=".")
         }
-        $something(head={ $l10n(en="wurdle" nl="wortel") } href="https://wurdle.esthe.win") {
+        $something(head={ $l10n(en="wurdle" nl="wortel") } href="https://wurdle.esthe.win" tags=(["Game", "Web", "Open-Source"])) {
             a(href="https://wurdle.esthe.win" target="_blank") { $l10n(en="Wurdle" nl="Wortel") }
             $l10n(en=" is my wordle clone, with a new random puzzle at any time, instead of daily unique puzzles." nl=" is mijn versie van wordle. Wortel kan oneindige willekeurige puzzels maken, in plaats van maar één per dag.")
         }
-        $something(head="65536" href="https://65536.esthe.win/") {
+        $something(head="65536" href="https://65536.esthe.win/" tags=(["Game", "Web", "Open-Source"])) {
             a(href="https://65536.esthe.win/" target="_blank") "65536"
             $l10n(en=" is my 2048 clone! pretty simple stuff." nl=" is mijn versie van het spel '2048'.")
         }
-        $something(head="ts2civet" href="https://ts2civet.esthe.win/") {
+        $something(head="ts2civet" href="https://ts2civet.esthe.win/" tags=(["Compiler", "Web", "Open-Source"])) {
             a(href="https://ts2civet.esthe.win/" target="_blank") "ts2civet"
             $l10n(en=" is a 'compiler' that transforms " nl=" is een 'compiler' die ")
             a(href="https://www.typescriptlang.org/" target="_blank") "typescript"
             $l10n(en=" code into equivalent and concise " nl="-code omzet naar equivalente en kortere ")
             a(href="https://civet.dev/" target="_blank") "civet"
             $l10n(en=" code." nl="-code.")
+        }
+        $something(head="YIPPEE" href="https://github.com/esthedebeste/YIPPEE" tags=(["Compiler", "C++", "LLVM", "Open-Source"])) {
+            a(href="https://github.com/esthedebeste/YIPPEE" target="_blank") "YIPPEE"
+            $l10n(en=" is my second high school attempt at a programming language using " nl=" is mijn (toenmalig middelbare scholier) tweede poging tot een programmeertaal m.b.v. ")
+            a(href="https://llvm.org/" target="_blank") "LLVM"
+        } "."
+        $something(head="ewhttp" href="https://github.com/esthedebeste/ewhttp" tags=(["C++", "Library", "Web", "Open-Source"])) {
+            a(href="https://github.com/esthedebeste/ewhttp" target="_blank") "ewhttp"
+            $l10n(en=" is a toy HTTP web server library for " nl=" is een hobby HTTP webserver module voor ")
+            a(href="https://cppreference.com/" target="_blank") "C++"
+            $l10n(en=" using modern C++20 " nl=" m.b.v. moderne C++20 ")
+            a(href="https://think-async.com/Asio/" target="_blank") "asio"
         }
     }
 }

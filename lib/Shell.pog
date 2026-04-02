@@ -16,10 +16,14 @@ html(lang=(language)) {
         link(rel="shortcut icon" href="/favicon.jpg" type="image/jpeg")
         title "esthe win!!"
         style {
+            :root {
+                color-scheme: light dark;
+            }
+
 			body {
-				background-color: #000;
-				color: #f0f;
-				font-family: "Comic Sans MS", serif;
+				background-color: light-dark(#fff, #000);
+				color:  light-dark(#000, #fff);
+				font-family: "Bahnschrift", serif;
                 display: flex;
                 flex-direction: column;
                 align-items: center;
@@ -172,8 +176,8 @@ html(lang=(language)) {
         }
         footer "[source code @ " {
             a(href="https://github.com/esthedebeste/esthe.win") "github:esthedebeste/esthe.win"
-        } " | " { $l10n(en="old site" nl="oude site") } " @ " { a(href="https://site2223.esthe.win") "site2223.esthe.win" } "]"
-        $space
+        } "]"
+        // $space
         script(async) 
             // personal options
         {
