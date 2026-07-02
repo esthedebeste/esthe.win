@@ -142,4 +142,37 @@ $shell {
             $icon#github(url="https://github.com/esthedebeste")
         }
     }
+
+    div {
+        b { $l10n(en="Current Logistics progress: " nl="Voortgang in Logistics: ") }
+        span with script {
+            const START_TIME = new Date("2026-07-02T20:00:00+02:00")
+            const PARTS = [28810,26958,28807,28799,28787,28803,28800,28790,28800,28800,28792,28805,28800,28787,28800,28800,28792,28802,28800,28791,28803,28800,28789,28806,28800,28786,28800,28800,28793,28800,28800,28792,28800,28800,28792,28808,28800,28784,28805,28799,28788,28809,28799,28783,28808,28793,18131,28807,28800,28789,28805,28803,28787,28804,28803,28789,28800,28800,28795,28804,28800,28792,28801,28804,22170,28809,28792,28791,28802,28802,28788,28807,28795,28791,28808,28800,28781,28810,28800,28783,28804,28800,28788,28801,28800,28791,28804,28800,28788,28801,28808,28783,28810,28800,28783,28809,28800,28783,28808,28800,28785,28809,28800,16477,28800,28800,15266]
+            function secs_to_hhmmss(secs) {
+                return `${Math.floor(secs/3600).toString().padStart(2, "0")}:${Math.floor(secs%3600/60).toString().padStart(2, "0")}:${Math.floor(secs%60).toString().padStart(2, "0")}`
+            }
+            function update() {
+                const now = new Date()
+                const elapsedSeconds = (now - START_TIME) / 1000
+                let remainingSeconds = elapsedSeconds
+                if (remainingSeconds < 0) {
+                    span.textContent = `0/${PARTS.length}: ${secs_to_hhmmss(-remainingSeconds)}`
+                    return
+                }
+                for (let i = 0; i < PARTS.length; i++) {
+                    const progress = remainingSeconds
+                    remainingSeconds -= PARTS[i]
+                    if (remainingSeconds < 0) {
+                        span.textContent = `${i + 1}/${PARTS.length}: ${secs_to_hhmmss(progress)}`
+                        break
+                    }
+                }
+                if (remainingSeconds >= 0) {
+                    span.textContent = `${PARTS.length}/${PARTS.length}: ${secs_to_hhmmss(remainingSeconds)}`
+                }
+            }
+            setInterval(() => update(), 1000)
+            update()
+        }
+    }
 }
